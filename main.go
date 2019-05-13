@@ -1,7 +1,6 @@
 package main
 
 import (
-	//"bufio"
 	"crypto/tls"
 	"fmt"
 	"io"
@@ -19,12 +18,15 @@ func main() {
 	checkError(err)
 
 	for {
+		// accept local connections
 		client, err := listener.Accept()
 		checkError(err)
 
+		// create a connection to cloudflare
 		upstream, err := tls.Dial("tcp", cloudflare, nil)
 		checkError(err)
 
+		// really basic piping between the connections
 		go io.Copy(client, upstream)
 		go io.Copy(upstream, client)
 	}
